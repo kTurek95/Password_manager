@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base, relationship
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 Base = declarative_base()
 
@@ -10,3 +10,11 @@ class Credential(Base):
     website = Column(String(30))
     login = Column(String(30))
     passwords = relationship('Password', back_populates='credential', uselist=False, cascade='all, delete-orphan')
+
+
+class Password(Base):
+    __tablename__ = 'Passwords'
+    id = Column(Integer, primary_key=True)
+    password = Column(String)
+    credential_id = Column(Integer, ForeignKey('Credentials.id'))
+    credential = relationship('Credential', back_populates='passwords')
