@@ -25,6 +25,10 @@ class AddPassword:
         password_label.grid(row=2, column=0)
         self.password.grid(row=2, column=1)
 
+        add_password_button = ttk.Button(tab, text='Add password')
+        add_password_button.place(relx=0.5, rely=0.7, anchor="center")
+        add_password_button.bind('<Button-1>', lambda event: self.insert_data_and_update_ui(event))
+
     @staticmethod
     def update_credentials_treeview(tree_name, table_name):
         """
@@ -49,3 +53,6 @@ class AddPassword:
 
             for record in data:
                 tree_name.insert('', 'end', values=(record.website, record.login))
+
+    def insert_data_and_update_ui(self, event):
+        pass
