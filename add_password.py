@@ -1,4 +1,8 @@
-from tkinter import ttk
+import tkinter as tk
+from tkinter import ttk, messagebox
+from cipher_tools import encrypt_password
+from database import create_database, Credential, Password
+from password_package import api, main
 
 
 class AddPassword:
@@ -20,3 +24,28 @@ class AddPassword:
         self.password = ttk.Entry(tab, show='*', width=45)
         password_label.grid(row=2, column=0)
         self.password.grid(row=2, column=1)
+
+    @staticmethod
+    def update_credentials_treeview(tree_name, table_name):
+        """
+            Updates the items in a Treeview widget with data retrieved from a specified database table.
+
+            This static method clears the current Treeview contents and, if a table name is provided,
+            queries the database for all records in that table. It then inserts each record's 'website'
+            and 'login' information as a new entry in the Treeview.
+
+            Parameters:
+            - tree_name (tkinter.Treeview): The Treeview widget instance to update.
+            - table_name (sqlalchemy.Table): The database table object from which to retrieve data.
+
+            Returns:
+            - None
+        """
+        tree_name.delete(*tree_name.get_children())
+
+        if table_name:
+            session = create_database()
+            data = session.query(table_name).all()
+
+            for record in data:
+                tree_name.insert('', 'end', values=(record.website, record.login))
