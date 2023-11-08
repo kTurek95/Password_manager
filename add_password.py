@@ -54,5 +54,10 @@ class AddPassword:
             for record in data:
                 tree_name.insert('', 'end', values=(record.website, record.login))
 
+    def clear_input_fields(self):
+        self.website.delete(0, tk.END)
+        self.login.delete(0, tk.END)
+        self.password.delete(0, tk.END)
+
     def insert_data_and_update_ui(self, event):
         pass
