@@ -60,4 +60,53 @@ class AddPassword:
         self.password.delete(0, tk.END)
 
     def insert_data_and_update_ui(self, event):
-        pass
+        website_value = self.website.get()
+        login_value = self.login.get()
+        password_value = self.password.get()
+
+        missing_fields = []
+        if not website_value.strip():
+            missing_fields.append("website")
+        if not login_value.strip():
+            missing_fields.append("login")
+        if not password_value.strip():
+            missing_fields.append("password")
+
+        if missing_fields:
+            messagebox.showinfo('Info', f'You forgot to add {", ".join(missing_fields)}')
+            self.clear_input_fields()
+
+        else:
+            session = create_database()
+            query = session.query(Credential).filter_by(website=website_value, login=login_value)
+            result = query.first()
+
+            if result and result.website == website_value and result.login == login_value:
+                messagebox.showinfo('Info', 'The data is already in the database')
+                self.clear_input_fields()
+
+            else:
+                password = api.Api(password_value)
+                valid, errors = main.validate_password(password)
+                if valid:
+                    credential = Credential(website=website_value, login=login_value)
+                    password_data = (
+                        Password(password=encrypt_password('kacper95', password_value), credential=credential))
+
+                    session.add(credential)
+                    session.add(password_data)
+                    session.commit()
+
+                    self.update_credentials_treeview(tree_name=self.credentials.tree, table_name=Credential)
+                    self.update_credentials_treeview(tree_name=self.update_password.tree, table_name=Credential)
+                    self.update_credentials_treeview(tree_name=self.delete_password.tree, table_name=Credential)
+
+                    self.clear_input_fields()
+                    messagebox.showinfo('Info', 'Credentials were added')
+
+                else:
+                    error_messages = '\n'.join([f' - {error}\n' for _, error in errors])
+                    messagebox.showerror(
+                        'Error',
+                        f'The provided password does not meet the following requirements:\n \n{error_messages}'
+                    )
