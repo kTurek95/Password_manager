@@ -1,5 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
+from cipher_tools import decrypt_password
+from database import create_database, Credential
 from update_treeview import UpdateTreeview
 
 
@@ -17,3 +19,14 @@ class Credentials(UpdateTreeview):
             show='headings',
             height=4
             )
+
+        self.configure_tree()
+
+    def configure_tree(self):
+        self.tree.column('Website', width=240)
+        self.tree.column('Login', width=240)
+        self.tree.heading('Website', text='Website', anchor='w')
+        self.tree.heading('Login', text='Login', anchor='w')
+        self.scrollbar.config(command=self.tree.yview)
+        self.tree.pack()
+        self.scrollbar.place(x=490, rely=0.36, anchor='center', height=99)
