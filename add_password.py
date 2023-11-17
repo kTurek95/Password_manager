@@ -6,7 +6,17 @@ from password_package import api, main
 
 
 class AddPassword:
+    """ Class for adding password records """
     def __init__(self, tab, credentials, update_password, delete_password):
+        """
+        Initialize the AddPassword instance.
+
+        Parameters:
+            tab (tkinter.Tk): The tab in which the UI elements should be created.
+            credentials: Containing credentials data.
+            update_password (callable): A function to update password data.
+            delete_password (callable): A function to delete password data.
+        """
         self.credentials = credentials
         self.update_password = update_password
         self.delete_password = delete_password
@@ -55,11 +65,34 @@ class AddPassword:
                 tree_name.insert('', 'end', values=(record.website, record.login))
 
     def clear_input_fields(self):
+        """
+        Clear input fields in the UI.
+
+        This method clears the website, login, and password input fields.
+        """
         self.website.delete(0, tk.END)
         self.login.delete(0, tk.END)
         self.password.delete(0, tk.END)
 
     def insert_data_and_update_ui(self, event):
+        """
+        Insert data from input fields into the database and update the user interface.
+
+        This method performs the following steps:
+        1. Retrieves values from the website, login, and password input fields.
+        2. Validates if any of the required fields are missing (website, login, or password).
+        3. If any required field is missing, it displays an info message and clears the input fields.
+        4. If all required fields are provided, it checks if the data already exists in the database.
+        5. If the data exists, it displays an info message and clears the input fields.
+        6. If the data does not exist, it validates the password and checks for any errors.
+        7. If the password is valid, it adds the credential and encrypted password data to the database.
+        8. It updates the credentials treeview in the UI with the new data.
+        9. It clears the input fields and displays an info message.
+
+        Parameters:
+            event: The event that triggered the function (not used here).
+        """
+
         website_value = self.website.get()
         login_value = self.login.get()
         password_value = self.password.get()
