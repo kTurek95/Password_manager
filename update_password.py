@@ -17,3 +17,16 @@ class UpdatePassword(UpdateTreeview):
             show='headings',
             height=4
         )
+
+        self.configure_tree()
+        self.item = None
+        self.toplevel = None
+        self.user_login = None
+        self.new_password = None
+
+    def configure_tree(self):
+        self.tree.column('Choose credential', width=480)
+        self.tree.heading('Choose credential', text='Choose website credential to update')
+        self.scrollbar.config(command=self.tree.yview)
+        self.tree.pack()
+        self.scrollbar.place(x=490, rely=0.36, anchor='center', height=99)
