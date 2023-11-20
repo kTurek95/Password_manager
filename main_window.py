@@ -9,7 +9,24 @@ from update_password import UpdatePassword
 
 
 def open_main_window(root):
+    """
+   Opens the main window for the Password Manager application.
+
+   This function creates the main application window with multiple tabs, including
+   'Credentials', 'Add Password', 'Update Password', and 'Delete Password'.
+   It initializes various components and sets up event handlers.
+
+   parameters:
+        root: The root Tkinter window to create the main window on.
+   """
     def on_close():
+        """
+        Callback function to handle the closing of the main window.
+
+        This function is called when the user attempts to close the main window.
+        It destroys the main window, effectively closing the application.
+
+        """
         root.destroy()
 
     main_window = tk.Toplevel(root)
