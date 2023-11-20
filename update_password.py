@@ -8,7 +8,31 @@ from password_package import api, main
 
 
 class UpdatePassword(UpdateTreeview):
+    """
+    A class for updating user passwords in a Treeview widget.
+
+    This class inherits from UpdateTreeview and provides functionality
+    for updating user passwords displayed in a Treeview widget.
+
+    Attributes:
+        root (tk.Tk): The root Tkinter application.
+        tab (tk.Frame): The parent frame where the Treeview widget is placed.
+        scrollbar (tk.Scrollbar): The vertical scrollbar for the Treeview widget.
+        tree (ttk.Treeview): The Treeview widget for displaying user credentials.
+        item: None (Optional): The currently selected Treeview item.
+        toplevel: None (Optional): The top-level window for updating the password.
+        user_login: None (Optional): The login of the user whose password is being updated.
+        new_password: None (Optional): The new password to set for the selected user.
+    """
     def __init__(self, tab, root, table_name):
+        """
+       Initialize the UpdatePassword class.
+
+       Parameters:
+           tab (tk.Frame): The parent frame where the Treeview widget will be placed.
+           root (tk.Tk): The root Tkinter application.
+           table_name (str): The name of the database table to work with.
+       """
         super().__init__(table_name)
         self.root = root
         self.tab = tab
@@ -40,6 +64,12 @@ class UpdatePassword(UpdateTreeview):
         add_tree2_button.bind('<Button-1>', self.on_click)
 
     def on_click(self, event):
+        """
+        Configure the Treeview widget for displaying user credentials.
+
+        This method sets up the Treeview widget with appropriate columns and headings,
+        configures the scrollbar, and places the widget and related button on the tab.
+        """
         selected_item = self.tree.selection()
         if selected_item:
             self.toplevel = tk.Toplevel(self.root)
@@ -67,6 +97,17 @@ class UpdatePassword(UpdateTreeview):
             submit_button.bind('<Button-1>', self.on_submit_button)
 
     def get_data(self):
+        """
+        Get and update user password data based on user input and Treeview selection.
+
+        This method retrieves user input for login and new password, as well as the selected Treeview item.
+        It then validates the new password, checks if the login matches the selected item, and updates the password
+        in the database if the password meets the requirements.
+
+        Raises:
+            - An error message if the provided password does not meet the requirements.
+            - A warning if the login does not match the selected website credential.
+        """
         login_from_user = self.user_login.get()
         user_password = self.new_password.get()
         data_item = self.tree.selection()[0]
@@ -95,6 +136,15 @@ class UpdatePassword(UpdateTreeview):
             self.tree.selection_remove(self.item)
 
     def on_submit_button(self, event):
+        """
+        Handle the submit button event.
+
+        This method triggers the retrieval and update of user password data using the `get_data` method.
+        If a top-level window (`toplevel`) exists, it is destroyed.
+
+        Args:
+            event: The event object associated with the button click.
+        """
         self.get_data()
         if self.toplevel:
             self.toplevel.destroy()
