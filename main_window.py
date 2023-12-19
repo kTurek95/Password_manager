@@ -36,7 +36,7 @@ def open_main_window(root):
     main_window.resizable(False, False)
     center_window(main_window)
 
-    tabsystem = Notebook(main_window)
+    tabsystem = ttk.Notebook(main_window)
 
     credentials = ttk.Frame(tabsystem)
     credentials_instance = Credentials(credentials, main_window, table_name=Credential)
