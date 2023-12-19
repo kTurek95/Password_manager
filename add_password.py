@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import string
+import random
 from cipher_tools import encrypt_password
 from database import create_database, Credential, Password
 from password_package import api, main
@@ -38,6 +40,24 @@ class AddPassword:
         add_password_button = ttk.Button(tab, text='Add password')
         add_password_button.place(relx=0.5, rely=0.7, anchor="center")
         add_password_button.bind('<Button-1>', lambda event: self.insert_data_and_update_ui(event))
+
+        def generate_password():
+            letters = string.ascii_letters
+            digits = string.digits
+            special = '!@#$%^&*<>?|()'
+            password = ''.join(random.sample(letters, 16) + (random.sample(special, 2)) + random.sample(digits, 2))
+            list_password = list(password)
+            random.shuffle(list_password)
+            shuffled_password = ''.join(list_password)
+
+            self.password.delete(0, tk.END)
+            self.password.insert(0, shuffled_password)
+
+        add_generate_password_button = ttk.Button(tab, text='Generate password')
+        add_generate_password_button.place(relx=0.7, rely=0.7, anchor="center")
+        add_generate_password_button.configure(
+            command=generate_password
+        )
 
     @staticmethod
     def update_credentials_treeview(tree_name, table_name):
