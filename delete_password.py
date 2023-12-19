@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import customtkinter as ctk
 from database import create_database, Credential
 from update_treeview import UpdateTreeview
 
@@ -60,7 +61,7 @@ class DeletePassword(UpdateTreeview):
         self.tree.pack()
         self.scrollbar.place(x=490, rely=0.36, anchor='center', height=99)
 
-        add_tree3_button = ttk.Button(self.tab, text='Submit')
+        add_tree3_button = ctk.CTkButton(self.tab, text='Submit')
         add_tree3_button.place(relx=0.5, rely=0.9, anchor="center")
         add_tree3_button.bind('<Button-1>', lambda event: self.delete_credentials(event))
 

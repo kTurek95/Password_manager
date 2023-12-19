@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import customtkinter as ctk
 import string
 import random
 from cipher_tools import encrypt_password
@@ -37,8 +38,8 @@ class AddPassword:
         password_label.grid(row=2, column=0)
         self.password.grid(row=2, column=1)
 
-        add_password_button = ttk.Button(tab, text='Add password')
-        add_password_button.place(relx=0.5, rely=0.7, anchor="center")
+        add_password_button = ctk.CTkButton(tab, text='Add password')
+        add_password_button.place(relx=0.35, rely=0.7, anchor="center")
         add_password_button.bind('<Button-1>', lambda event: self.insert_data_and_update_ui(event))
 
         def generate_password():
@@ -53,8 +54,8 @@ class AddPassword:
             self.password.delete(0, tk.END)
             self.password.insert(0, shuffled_password)
 
-        add_generate_password_button = ttk.Button(tab, text='Generate password')
-        add_generate_password_button.place(relx=0.7, rely=0.7, anchor="center")
+        add_generate_password_button = ctk.CTkButton(tab, text='Generate password')
+        add_generate_password_button.place(relx=0.65, rely=0.7, anchor="center")
         add_generate_password_button.configure(
             command=generate_password
         )

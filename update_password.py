@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import customtkinter as ctk
 from cipher_tools import encrypt_password
 from database import create_database, Credential
 from center_window import center_window
@@ -59,7 +60,7 @@ class UpdatePassword(UpdateTreeview):
         self.tree.pack()
         self.scrollbar.place(x=490, rely=0.36, anchor='center', height=99)
 
-        add_tree2_button = ttk.Button(self.tab, text='Submit')
+        add_tree2_button = ctk.CTkButton(self.tab, text='Submit')
         add_tree2_button.place(relx=0.5, rely=0.9, anchor="center")
         add_tree2_button.bind('<Button-1>', self.on_click)
 

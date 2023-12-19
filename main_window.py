@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import customtkinter as ctk
 from add_password import AddPassword
 from credentials import Credentials
 from database import Credential
@@ -29,13 +30,13 @@ def open_main_window(root):
         """
         root.destroy()
 
-    main_window = tk.Toplevel(root)
+    main_window = ctk.CTkToplevel(root)
     main_window.title('Password Manager')
     main_window.geometry('550x200')
     main_window.resizable(False, False)
     center_window(main_window)
 
-    tabsystem = ttk.Notebook(main_window)
+    tabsystem = Notebook(main_window)
 
     credentials = ttk.Frame(tabsystem)
     credentials_instance = Credentials(credentials, main_window, table_name=Credential)
