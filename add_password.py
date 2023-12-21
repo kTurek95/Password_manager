@@ -23,23 +23,23 @@ class AddPassword:
         self.credentials = credentials
         self.update_password = update_password
         self.delete_password = delete_password
-        website_label = ttk.Label(tab, text='Website')
-        self.website = ttk.Entry(tab, width=45)
-        website_label.grid(row=0, column=0)
-        self.website.grid(row=0, column=1)
+        website_label = ctk.CTkLabel(tab, text='Website', anchor='w')
+        self.website = ctk.CTkEntry(tab, width=250, corner_radius=10)
+        website_label.grid(row=0, column=0, pady=5, sticky='w')
+        self.website.grid(row=0, column=1, padx=90, pady=5)
 
-        login_label = ttk.Label(tab, text='Login')
-        self.login = ttk.Entry(tab, width=45)
-        login_label.grid(row=1, column=0)
-        self.login.grid(row=1, column=1)
+        login_label = ctk.CTkLabel(tab, text='Login')
+        self.login = ctk.CTkEntry(tab, width=250, corner_radius=10)
+        login_label.grid(row=1, column=0, pady=5, sticky='w')
+        self.login.grid(row=1, column=1 , padx=90, pady=5)
 
-        password_label = ttk.Label(tab, text='Password')
-        self.password = ttk.Entry(tab, show='*', width=45)
-        password_label.grid(row=2, column=0)
-        self.password.grid(row=2, column=1)
+        password_label = ctk.CTkLabel(tab, text='Password', anchor='w')
+        self.password = ctk.CTkEntry(tab, show='*', width=250, corner_radius=10)
+        password_label.grid(row=2, column=0, pady=5, sticky='w')
+        self.password.grid(row=2, column=1, padx=90, pady=5)
 
         add_password_button = ctk.CTkButton(tab, text='Add password')
-        add_password_button.place(relx=0.35, rely=0.7, anchor="center")
+        add_password_button.place(relx=0.35, rely=0.85, anchor="center")
         add_password_button.bind('<Button-1>', lambda event: self.insert_data_and_update_ui(event))
 
         def generate_password():
@@ -55,7 +55,7 @@ class AddPassword:
             self.password.insert(0, shuffled_password)
 
         add_generate_password_button = ctk.CTkButton(tab, text='Generate password')
-        add_generate_password_button.place(relx=0.65, rely=0.7, anchor="center")
+        add_generate_password_button.place(relx=0.65, rely=0.85, anchor="center")
         add_generate_password_button.configure(
             command=generate_password
         )
