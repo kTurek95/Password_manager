@@ -50,6 +50,15 @@ class Password(Base):
     credential = relationship('Credential', back_populates='passwords')
 
 
+class LoginCredentials(Base):
+    __tablename__ = 'LoginCredentials'
+    id = Column(Integer, primary_key=True)
+    login = Column(String)
+    password = Column(String)
+    confirm_password = Column(String)
+    email = Column(String)
+
+
 def create_database():
     """
        Creates a new SQLite database named 'database.db' and initializes tables based on the Base metadata.
