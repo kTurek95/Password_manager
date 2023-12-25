@@ -1,14 +1,13 @@
-from os import getenv
 import tkinter as tk
 from tkinter import messagebox
-from dotenv import load_dotenv
 from main_window import open_main_window
+from database import create_database, LoginCredentials
 
-failed_attempts = 0
+FAILED_ATTEMPTS = 0
 
 
 class CheckPassword:
-    def __init__(self, user_password, root):
+    def __init__(self, user_login, user_password, root):
         """
        Initialize a CheckPassword instance.
 
@@ -18,6 +17,7 @@ class CheckPassword:
        """
         self.root = root
         self.user_password = user_password
+        self.user_login = user_login
 
     def check_password(self):
         """
@@ -26,13 +26,18 @@ class CheckPassword:
        Returns:
        - bool: True if the user-entered password matches the valid password, False otherwise.
        """
-        load_dotenv()
-        valid_password = getenv('PASSWORD')
-        password_from_user = self.user_password.get()
 
-        if valid_password == password_from_user:
-            return True
-        return False
+        session = create_database()
+        credentials = session.query(LoginCredentials.login, LoginCredentials.password).all()
+        password_from_user = self.user_password.get()
+        username = self.user_login.get()
+
+
+        for login, password in credentials:
+            if password == password_from_user and login == username:
+                return True
+            return False
+
 
     def on_submit(self, event):
         """
@@ -50,7 +55,7 @@ class CheckPassword:
         Returns:
             None. May close the main application window in case of access being blocked.
         """
-        global failed_attempts
+        global FAILED_ATTEMPTS
         user_password = self.user_password.get()
         if not user_password.strip():
             messagebox.showinfo('Info', "You didn't enter the password")
@@ -62,8 +67,8 @@ class CheckPassword:
         else:
             if len(user_password) > 1:
                 self.user_password.delete(0, tk.END)
-                failed_attempts += 1
+                FAILED_ATTEMPTS += 1
                 messagebox.showwarning('Error', 'Wrong password')
-                if failed_attempts >= 3:
+                if FAILED_ATTEMPTS >= 3:
                     messagebox.showwarning('Error', 'Access blocked')
                     self.root.destroy()
