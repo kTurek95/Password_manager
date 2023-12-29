@@ -1,3 +1,9 @@
+"""
+The 'check_password' module is responsible for verifying
+whether the user's password and login exist in the database.
+If they do not, an error message is displayed, indicating that the data is incorrect.
+If they do, the user can proceed to the main application.
+"""
 import tkinter as tk
 from tkinter import messagebox
 from main_window import open_main_window
@@ -7,13 +13,22 @@ FAILED_ATTEMPTS = 0
 
 
 class CheckPassword:
+    """
+    The 'CheckPassword' class handles the logic for verifying user-provided passwords and logins.
+
+    Methods:
+        - __init__
+        - check_password
+        - on submit
+    """
     def __init__(self, user_login, user_password, root):
         """
        Initialize a CheckPassword instance.
 
        Parameters:
-       - user_password (str): The user-entered password to be checked.
-       - root: The root of the application (assuming it's a Tkinter application).
+        - user_login (str) : The user-entered login to be checked
+        - user_password (str): The user-entered password to be checked.
+        - root: The root of the application (assuming it's a Tkinter application).
        """
         self.root = root
         self.user_password = user_password
@@ -28,7 +43,7 @@ class CheckPassword:
        """
 
         session = create_database()
-        credentials = session.query(LoginCredentials.login, LoginCredentials.password).all()
+        credentials = session.query(LoginCredentials.username, LoginCredentials.password).all()
         password_from_user = self.user_password.get()
         username = self.user_login.get()
 
@@ -36,9 +51,9 @@ class CheckPassword:
         for login, password in credentials:
             if password == password_from_user and login == username:
                 return True
-            return False
+        return False
 
-
+    # pylint: disable=unused-argument
     def on_submit(self, event):
         """
         Handles the form submission event in the user interface.
@@ -55,20 +70,24 @@ class CheckPassword:
         Returns:
             None. May close the main application window in case of access being blocked.
         """
+        # pylint: disable=global-statement
         global FAILED_ATTEMPTS
         user_password = self.user_password.get()
-        if not user_password.strip():
+        username = self.user_login.get()
+        if not user_password:
             messagebox.showinfo('Info', "You didn't enter the password")
-
+        elif not username:
+            messagebox.showinfo('Info', "You didn't enter the username")
         elif self.check_password():
             self.root.withdraw()
-            open_main_window(self.root)
-
+            open_main_window(self.root, username)
+        elif not user_password and not username:
+            messagebox.showinfo('Info', "You didn't enter credentials")
         else:
             if len(user_password) > 1:
                 self.user_password.delete(0, tk.END)
                 FAILED_ATTEMPTS += 1
-                messagebox.showwarning('Error', 'Wrong password')
+                messagebox.showwarning('Error', 'Wrong credentials')
                 if FAILED_ATTEMPTS >= 3:
                     messagebox.showwarning('Error', 'Access blocked')
                     self.root.destroy()
