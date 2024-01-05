@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 class Email:
     load_dotenv()
 
-    def __init__(self, receiver_email, receiver_name):
+    def __init__(self, receiver_email, receiver_name, receiver_password):
         self.receiver_email = receiver_email
         self.receiver_name = receiver_name
+        self.receiver_password = receiver_password
 
     @staticmethod
     def smtp_settings():
@@ -23,7 +24,13 @@ class Email:
 
     def send_mail(self):
         subject = 'Password Manager'
-        message = f'Hello {self.receiver_name} your account is now registered'
+        message = (
+            f'Hello {self.receiver_name} your account is now registered. Bellow you can find your login and password:\n\n'
+        
+            f'username = {self.receiver_name}\n'
+            f'password = {self.receiver_password}'
+        )
+        
         smtp_server, smtp_port, smtp_username, smtp_password, sender = self.smtp_settings()
 
         msg = MIMEText(message)
