@@ -4,10 +4,10 @@ whether the user's password and login exist in the database.
 If they do not, an error message is displayed, indicating that the data is incorrect.
 If they do, the user can proceed to the main application.
 """
-import tkinter as tk
 from tkinter import messagebox
 from main_window import open_main_window
 from database import create_database, LoginCredentials
+from utils import clear_input_fields
 
 FAILED_ATTEMPTS = 0
 
@@ -85,7 +85,7 @@ class CheckPassword:
             messagebox.showinfo('Info', "You didn't enter credentials")
         else:
             if len(user_password) > 1:
-                self.user_password.delete(0, tk.END)
+                clear_input_fields(self.user_password, self.user_login)
                 FAILED_ATTEMPTS += 1
                 messagebox.showwarning('Error', 'Wrong credentials')
                 if FAILED_ATTEMPTS >= 3:
