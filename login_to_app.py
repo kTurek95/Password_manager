@@ -4,8 +4,7 @@ from CTkListbox import *
 from check_password import CheckPassword
 
 class LoginToApp:
-    def __init__(self, tab, tab1, tab2, func, root):
-        self.tab = tab
+    def __init__(self, tab1, tab2, func, root):
         self.tab1 = tab1
         self.tab2 = tab2
         self.func = func
