@@ -14,18 +14,27 @@ def clear_input_fields(*args):
 
 
 def get_users_from_database(username=None):
+        """
+        If a username is provided, 
+        retrieves the user's password. If no username is provided, 
+        retrievesthe user's usernames.
+
+        Args:
+            username (str, optional): The username of the user whose password is to be retrieved. 
+                                    If None, all usernames are retrieved. Defaults to None.
+
+        Returns:
+            list: A list of usernames if no username is provided. If a username is provided, 
+                returns a list containing the user password.
+        """
         users = []
         session = create_database()
-        if username:
-            user_username = session.query(LoginCredentials).filter_by(username=username).first()
-            if user_username:
-                all_users = session.query(LoginCredentials).all()
-                for record in all_users:
-                    if record.id != user_username.id:
-                        users.append(record.username)
+        if not username:
+            all_users = session.query(LoginCredentials).all()
+            for user in all_users:
+                users.append(user.username)
         else:
-             all_users = session.query(LoginCredentials).all()
-             for record in all_users:
-                  users.append(record.username)
+             user = session.query(LoginCredentials).filter_by(username=username).first()
+             users.append(user.password)
 
         return users
