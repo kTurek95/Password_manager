@@ -41,23 +41,32 @@ class Credentials(UpdateTreeview):
             yscrollcommand=self.scrollbar.set,
             columns=('Website', 'Login'),
             show='headings',
-            height=4
+            height=4,
             )
 
+        my_color = '#292929'
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure('Treeview', fieldbackground=my_color, background=my_color, foreground='white')
         self.configure_tree()
+
 
     def configure_tree(self):
         """
         Configures the 'tree' treeview by setting up columns, headings, and a scrollbar.
         Also adds a 'Submit' button and assigns it a corresponding function.
         """
-        self.tree.column('Website', width=240)
-        self.tree.column('Login', width=240)
-        self.tree.heading('Website', text='Website', anchor='w')
-        self.tree.heading('Login', text='Login', anchor='w')
+        self.tree['columns'] = ('first', 'second')
+        self.tree.column('#0', width=120, stretch=tk.NO)
+        self.tree.column('first', stretch=tk.YES, width=120)
+        self.tree.column('second', stretch=tk.YES, width=120)
+
+        self.tree.heading('#0')
+        self.tree.heading('first', text='Website')
+        self.tree.heading('second', text='Login')
         self.scrollbar.config(command=self.tree.yview)
-        self.tree.pack()
-        self.scrollbar.place(x=490, rely=0.36, anchor='center', height=99)
+        self.tree.pack(expand=True, fill='both')
+        self.scrollbar.place(x=490, rely=0.32, anchor='center', height=99)
 
         add_tree_button = ctk.CTkButton(self.tab, text='Submit')
         add_tree_button.place(relx=0.5, rely=0.9, anchor="center")
