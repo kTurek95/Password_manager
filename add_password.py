@@ -1,16 +1,35 @@
+"""
+AddPassword Module
+
+This module is responsible for encrypting and adding a password
+provided by the user to the database.
+It contains the AddPassword class and static methods
+for managing data and the user interface.
+
+Classes:
+    AddPassword: The main class in the module, managing the process of adding a new password.
+
+Methods:
+    staitcmethod - update_credentials_treeview():
+    A static method that updates the tree view of the credentials data.
+    insert_data_and_update_ui():
+    Method that inserts data into the database and updates the user interface.
+"""
+
 import tkinter as tk
-from tkinter import ttk, messagebox
-import customtkinter as ctk
+from tkinter import messagebox
 import string
 import random
-from cipher_tools import encrypt_password
-from database import create_database, Credential, Password
+import customtkinter as ctk
 from password_package import api, main
+from cipher_tools import encrypt_password
+from database import create_database, Credential, Password, LoginCredentials
+from utils import clear_input_fields
 
 
 class AddPassword:
     """ Class for adding password records """
-    def __init__(self, tab, credentials, update_password, delete_password):
+    def __init__(self, tab, credentials, username, update_password, delete_password):
         """
         Initialize the AddPassword instance.
 
@@ -21,22 +40,24 @@ class AddPassword:
             delete_password (callable): A function to delete password data.
         """
         self.credentials = credentials
+        self.username = username
         self.update_password = update_password
         self.delete_password = delete_password
+
         website_label = ctk.CTkLabel(tab, text='Website', anchor='w')
-        self.website = ctk.CTkEntry(tab, width=250, corner_radius=10)
-        website_label.grid(row=0, column=0, pady=5, sticky='w')
-        self.website.grid(row=0, column=1, padx=90, pady=5)
+        self.website = ctk.CTkEntry(tab, width=200, corner_radius=10)
+        website_label.grid(row=0, column=0, padx=90, pady=5, sticky='w')
+        self.website.grid(row=0, column=1, pady=5)
 
         login_label = ctk.CTkLabel(tab, text='Login')
-        self.login = ctk.CTkEntry(tab, width=250, corner_radius=10)
-        login_label.grid(row=1, column=0, pady=5, sticky='w')
-        self.login.grid(row=1, column=1 , padx=90, pady=5)
+        self.login = ctk.CTkEntry(tab, width=200, corner_radius=10)
+        login_label.grid(row=1, column=0, padx=90, pady=5, sticky='w')
+        self.login.grid(row=1, column=1, pady=5)
 
         password_label = ctk.CTkLabel(tab, text='Password', anchor='w')
-        self.password = ctk.CTkEntry(tab, show='*', width=250, corner_radius=10)
-        password_label.grid(row=2, column=0, pady=5, sticky='w')
-        self.password.grid(row=2, column=1, padx=90, pady=5)
+        self.password = ctk.CTkEntry(tab, show='*', width=200, corner_radius=10)
+        password_label.grid(row=2, column=0, padx=90, pady=5, sticky='w')
+        self.password.grid(row=2, column=1, pady=5)
 
         add_password_button = ctk.CTkButton(tab, text='Add password')
         add_password_button.place(relx=0.35, rely=0.85, anchor="center")
@@ -46,7 +67,9 @@ class AddPassword:
             letters = string.ascii_letters
             digits = string.digits
             special = '!@#$%^&*<>?|()'
-            password = ''.join(random.sample(letters, 16) + (random.sample(special, 2)) + random.sample(digits, 2))
+            password = ''.join(
+                random.sample(letters, 16) + (random.sample(special, 2)) + random.sample(digits, 2)
+                )
             list_password = list(password)
             random.shuffle(list_password)
             shuffled_password = ''.join(list_password)
@@ -61,39 +84,31 @@ class AddPassword:
         )
 
     @staticmethod
-    def update_credentials_treeview(tree_name, table_name):
+    def update_credentials_treeview(tree_name, table_name, username):
         """
-            Updates the items in a Treeview widget with data retrieved from a specified database table.
+        Updates the items in a Treeview widget with data retrieved from a specified database table.
 
-            This static method clears the current Treeview contents and, if a table name is provided,
-            queries the database for all records in that table. It then inserts each record's 'website'
-            and 'login' information as a new entry in the Treeview.
+        This static method clears the current Treeview contents and, if a table name is provided,
+        queries the database for all records in that table. It then inserts each record's 'website'
+        and 'login' information as a new entry in the Treeview.
 
-            Parameters:
-            - tree_name (tkinter.Treeview): The Treeview widget instance to update.
-            - table_name (sqlalchemy.Table): The database table object from which to retrieve data.
+        Parameters:
+        - tree_name (tkinter.Treeview): The Treeview widget instance to update.
+        - table_name (sqlalchemy.Table): The database table object from which to retrieve data.
 
-            Returns:
-            - None
+        Returns:
+        - None
         """
         tree_name.delete(*tree_name.get_children())
 
         if table_name:
             session = create_database()
+            user_username = session.query(LoginCredentials).filter_by(username=username).first()
             data = session.query(table_name).all()
 
             for record in data:
-                tree_name.insert('', 'end', values=(record.website, record.login))
-
-    def clear_input_fields(self):
-        """
-        Clear input fields in the UI.
-
-        This method clears the website, login, and password input fields.
-        """
-        self.website.delete(0, tk.END)
-        self.login.delete(0, tk.END)
-        self.password.delete(0, tk.END)
+                if record.username_id == user_username.id:
+                    tree_name.insert('', 'end', values=(record.website, record.login))
 
     def insert_data_and_update_ui(self, event):
         """
@@ -102,11 +117,14 @@ class AddPassword:
         This method performs the following steps:
         1. Retrieves values from the website, login, and password input fields.
         2. Validates if any of the required fields are missing (website, login, or password).
-        3. If any required field is missing, it displays an info message and clears the input fields.
-        4. If all required fields are provided, it checks if the data already exists in the database.
+        3. If any required field is missing,
+           it displays an info message and clears the input fields.
+        4. If all required fields are provided,
+           it checks if the data already exists in the database.
         5. If the data exists, it displays an info message and clears the input fields.
         6. If the data does not exist, it validates the password and checks for any errors.
-        7. If the password is valid, it adds the credential and encrypted password data to the database.
+        7. If the password is valid,
+           it adds the credential and encrypted password data to the database.
         8. It updates the credentials treeview in the UI with the new data.
         9. It clears the input fields and displays an info message.
 
@@ -128,34 +146,44 @@ class AddPassword:
 
         if missing_fields:
             messagebox.showinfo('Info', f'You forgot to add {", ".join(missing_fields)}')
-            self.clear_input_fields()
+            clear_input_fields(self.website, self.login, self.password)
 
         else:
             session = create_database()
             query = session.query(Credential).filter_by(website=website_value, login=login_value)
+            user = session.query(LoginCredentials).filter_by(username=self.username).first()
             result = query.first()
 
             if result and result.website == website_value and result.login == login_value:
                 messagebox.showinfo('Info', 'The data is already in the database')
-                self.clear_input_fields()
+                clear_input_fields(self.website, self.login, self.password)
 
             else:
-                password = api.Api(password_value)
-                valid, errors = main.validate_password(password)
+                valid, errors = main.validate_password(api.Api(password_value))
                 if valid:
-                    credential = Credential(website=website_value, login=login_value)
+                    credential = Credential(website=website_value,
+                                            login=login_value,
+                                            username_id=user.id)
                     password_data = (
-                        Password(password=encrypt_password('kacper95', password_value), credential=credential))
+                        Password(password=encrypt_password('kacper95', password_value),
+                                credential=credential)
+                                )
 
                     session.add(credential)
                     session.add(password_data)
                     session.commit()
 
-                    self.update_credentials_treeview(tree_name=self.credentials.tree, table_name=Credential)
-                    self.update_credentials_treeview(tree_name=self.update_password.tree, table_name=Credential)
-                    self.update_credentials_treeview(tree_name=self.delete_password.tree, table_name=Credential)
+                    self.update_credentials_treeview(tree_name=self.credentials.tree,
+                                                     table_name=Credential,
+                                                     username=self.username)
+                    self.update_credentials_treeview(tree_name=self.update_password.tree,
+                                                     table_name=Credential,
+                                                     username=self.username)
+                    self.update_credentials_treeview(tree_name=self.delete_password.tree,
+                                                     table_name=Credential,
+                                                     username=self.username)
 
-                    self.clear_input_fields()
+                    clear_input_fields(self.website, self.login, self.password)
                     messagebox.showinfo('Info', 'Credentials were added')
 
                 else:
@@ -164,3 +192,4 @@ class AddPassword:
                         'Error',
                         f'The provided password does not meet the following requirements:\n \n{error_messages}'
                     )
+                    clear_input_fields(self.website, self.login, self.password)
