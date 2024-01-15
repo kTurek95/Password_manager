@@ -79,13 +79,16 @@ class DeleteUser:
         The selected user is removed,
         and an informational message about the successful deletion is displayed.
         """
-        session = create_database()
-        selected_user = [user for check_var, user in self.checkboxes if check_var.get()][0]
-        user = session.query(LoginCredentials).filter_by(username=selected_user).first()
-        if user:
-            session.delete(user)
-            session.commit()
-            messagebox.showinfo('Info', 'The user has been deleted.')
+        try:
+            session = create_database()
+            selected_user = [user for check_var, user in self.checkboxes if check_var.get()][0]
+            user = session.query(LoginCredentials).filter_by(username=selected_user).first()
+            if user:
+                session.delete(user)
+                session.commit()
+                messagebox.showinfo('Info', 'The user has been deleted.')
+        except IndexError:
+            messagebox.showerror('Error', 'Please choose user to delete')
 
     def delete_button(self):
         """
