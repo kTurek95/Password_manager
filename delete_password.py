@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import customtkinter as ctk
-from database import create_database, Credential
+from database import create_database, Credential, LoginCredentials
 from update_treeview import UpdateTreeview
 
 
@@ -23,7 +23,7 @@ class DeletePassword(UpdateTreeview):
     - scrollbar (tk.Scrollbar): A scrollbar for the treeview.
     - tree (ttk.Treeview): A treeview widget to display the credentials.
     """
-    def __init__(self, tab, credentials, update_password, table_name):
+    def __init__(self, tab, credentials, username, update_password, table_name):
         """
         Initializes the DeletePassword class with the given parameters.
 
@@ -42,6 +42,7 @@ class DeletePassword(UpdateTreeview):
         """
         super().__init__(table_name)
         self.credentials = credentials
+        self.username = username
         self.update_password = update_password
         self.tab = tab
         self.scrollbar = tk.Scrollbar(tab, orient='vertical')
@@ -64,9 +65,9 @@ class DeletePassword(UpdateTreeview):
 
         add_tree3_button = ctk.CTkButton(self.tab, text='Submit')
         add_tree3_button.place(relx=0.5, rely=0.9, anchor="center")
-        add_tree3_button.bind('<Button-1>', lambda event: self.delete_credentials(event))
+        add_tree3_button.bind('<Button-1>', lambda event: self.delete_credentials(self.username, event))
 
-    def delete_credentials(self, event):
+    def delete_credentials(self, username, event):
         """
         Deletes selected credentials from the database and updates the treeview.
 
@@ -84,10 +85,11 @@ class DeletePassword(UpdateTreeview):
         if selected_item:
             item = self.tree.item(selected_item[0])
             selected_website = item.get('values')[0]
-            response = messagebox.askyesno('Question', 'Czy na pewno chcesz usunąć hasło?')
+            response = messagebox.askyesno('Question', 'Are you sure you want to delete the password?')
             if response:
                 session = create_database()
-                credential = session.query(Credential).filter_by(website=selected_website).first()
+                user_username = session.query(LoginCredentials).filter_by(username=username).first()
+                credential = session.query(Credential).filter_by(website=selected_website, username_id=user_username.id).first()
                 if credential:
                     session.delete(credential)
                     session.commit()
@@ -95,8 +97,8 @@ class DeletePassword(UpdateTreeview):
                     if self.tree.exists(selected_item[0]):
                         self.tree.delete(selected_item[0])
 
-                        self.update_credentials_treeview(tree_name=self.credentials.tree)
-                        self.update_credentials_treeview(tree_name=self.update_password.tree)
-                        self.update_credentials_treeview(self.tree)
+                        self.update_credentials_treeview(tree_name=self.credentials.tree, username=self.username)
+                        self.update_credentials_treeview(tree_name=self.update_password.tree, username=self.username)
+                        self.update_credentials_treeview(self.tree, self.username)
 
                         messagebox.showinfo('Info', 'Credentials were deleted')
