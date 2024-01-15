@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import messagebox
 from database import create_database
 from database import LoginCredentials
 
@@ -54,3 +55,29 @@ def move_user(tabview, tab_name):
         None
     """
     tabview.set(tab_name)
+
+
+def check_if_fields_not_missing(**kwargs):
+    """
+    Check if any of the provided keyword arguments (fields) are missing or empty.
+
+    This function iterates through each key-value pair in the kwargs. If the value associated with
+    a key is an empty string (or only contains whitespace), the key is considered as a missing field.
+
+    Args:
+        **kwargs: A variable number of keyword arguments. Each argument represents a field 
+                  with its value as the field's content.
+
+    Returns:
+        bool: True if all fields are non-empty, False otherwise.
+    """
+    missing_fields = []
+    for key, value in kwargs.items():
+        if not value.strip():
+            missing_fields.append(key)
+
+
+    if missing_fields:
+                messagebox.showinfo('Info',f"You didn't enter the {', '.join(missing_fields)}")
+                return False
+    return True
