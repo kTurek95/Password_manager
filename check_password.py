@@ -8,6 +8,7 @@ from tkinter import messagebox
 from main_window import open_main_window
 from database import create_database, LoginCredentials
 from utils import clear_input_fields
+from utils import check_if_fields_not_missing
 
 FAILED_ATTEMPTS = 0
 
@@ -53,8 +54,7 @@ class CheckPassword:
                 return True
         return False
 
-    # pylint: disable=unused-argument
-    def on_submit(self, event):
+    def on_submit(self):
         """
         Handles the form submission event in the user interface.
 
@@ -64,9 +64,6 @@ class CheckPassword:
         In case of failed login attempts, the user is presented with appropriate
         warning messages, and after three failed attempts, access is blocked.
 
-        Parameters:
-            event: The event object passed by the Tkinter event system.
-
         Returns:
             None. May close the main application window in case of access being blocked.
         """
@@ -74,20 +71,23 @@ class CheckPassword:
         global FAILED_ATTEMPTS
         user_password = self.user_password.get()
         username = self.user_login.get()
-        if not user_password:
-            messagebox.showinfo('Info', "You didn't enter the password")
-        elif not username:
-            messagebox.showinfo('Info', "You didn't enter the username")
-        elif self.check_password():
+
+        missing_fields = check_if_fields_not_missing(
+            username = self.user_login.get(),
+            password = self.user_password.get()
+        )
+
+        if missing_fields and self.check_password():
             self.root.withdraw()
-            open_main_window(self.root, username)
-        elif not user_password and not username:
-            messagebox.showinfo('Info', "You didn't enter credentials")
-        else:
-            if len(user_password) > 1:
-                clear_input_fields(self.user_password, self.user_login)
-                FAILED_ATTEMPTS += 1
-                messagebox.showwarning('Error', 'Wrong credentials')
-                if FAILED_ATTEMPTS >= 3:
-                    messagebox.showwarning('Error', 'Access blocked')
-                    self.root.destroy()
+            open_main_window(self.root, username, self.user_login, self.user_password)
+            return True
+
+        if len(user_password) > 1:
+            clear_input_fields(self.user_password, self.user_login)
+            FAILED_ATTEMPTS += 1
+            messagebox.showwarning('Error', 'Wrong credentials')
+            if FAILED_ATTEMPTS >= 3:
+                messagebox.showwarning('Error', 'Access blocked')
+                self.root.destroy()
+
+        return False
