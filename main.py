@@ -1,32 +1,56 @@
-from tkinter import ttk
-import tkinter as tk
+"""
+This module defines the main functionality for the Password Manager application,
+allowing users to log in, register, and delete their accounts. It utilizes custom
+Tkinter widgets for the graphical user interface components.
+"""
+
 import customtkinter as ctk
-from check_password import CheckPassword
+from register_user import RegisterUser
+from login_to_app import LoginToApp
+from delete_user import DeleteUser
+from center_window import center_window
+from users import Users
 
 
-def on_closing():
-    root.destroy()
+def open_login_window():
+    """
+    Opens the login window for the Password Manager application.
+    
+    This function creates a graphical user interface for the Password Manager application,
+    allowing users to log in, register, and delete their accounts.
+    """
+    root = ctk.CTk()
+    center_window(root)
+    root.title('Password Manager')
+    ctk.set_appearance_mode('Dark')
+    root.geometry('350x250')
+    root.resizable(False, False)
+
+    def on_closing():
+        root.destroy()
+
+    my_tab = ctk.CTkTabview(root)
+    my_tab.pack(fill='both', expand=True, pady=15, padx=15)
+
+    users_tab = my_tab.add('Users')
+    login_tab = my_tab.add('Login')
+    register_tab = my_tab.add('Register')
+    delete_tab = my_tab.add('Delete User')
+
+    my_frame = ctk.CTkScrollableFrame(delete_tab)
+    my_frame.pack()
+
+    RegisterUser(register_tab)
+
+    LoginToApp(login_tab, root, my_tab)
+    user_instance = Users(users_tab, login_tab, root, my_tab)
+    user_instance.display_login_users()
+    deleteuser_instance = DeleteUser(my_frame)
+    deleteuser_instance.display_users()
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
 
 
 if __name__ == '__main__':
-    root = ctk.CTk()
-    root.title('Password Manager')
-    ctk.set_appearance_mode('Dark')
-    root.protocol("WM_DELETE_WINDOW", on_closing)
-    root.geometry('250x100')
-    root.resizable(False, False)
-    root.eval('tk::PlaceWindow . center')
-
-    password_from_user_label = ctk.CTkLabel(root, text='Input password')
-    password_from_user_label.place(relx=0.5, rely=0.2, anchor="center")
-
-    password_from_user = ctk.CTkEntry(root, show='*')
-    password_from_user.place(relx=0.5, rely=0.45, anchor="center")
-
-    check_password_instance = CheckPassword(password_from_user, root)
-
-    add_submit_button = ctk.CTkButton(root, corner_radius=10, text='Submit')
-    add_submit_button.place(relx=0.5, rely=0.75, anchor="center")
-    add_submit_button.bind('<Button-1>', lambda event: check_password_instance.on_submit(event))
-
-    root.mainloop()
+    open_login_window()
