@@ -125,8 +125,7 @@ class UpdatePassword(UpdateTreeview):
         login_from_user = self.user_login.get()
         user_password = self.new_password.get()
         data_item = self.tree.selection()[0]
-        password = api.Api(user_password)
-        valid, errors = main.validate_password(password)
+        valid, errors = main.validate_password(api.Api(user_password))
         if data_item:
             values = self.tree.item(data_item, 'values')
             selected_website = values[0]
