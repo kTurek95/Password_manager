@@ -24,7 +24,7 @@ import customtkinter as ctk
 from password_package import api, main
 from cipher_tools import encrypt_password
 from database import create_database, Credential, Password, LoginCredentials
-from utils import clear_input_fields
+from utils import clear_input_fields, check_if_fields_not_missing
 
 
 class AddPassword:
@@ -135,20 +135,16 @@ class AddPassword:
         website_value = self.website.get()
         login_value = self.login.get()
         password_value = self.password.get()
-
-        missing_fields = []
-        if not website_value.strip():
-            missing_fields.append("website")
-        if not login_value.strip():
-            missing_fields.append("login")
-        if not password_value.strip():
-            missing_fields.append("password")
+        
+        missing_fields= check_if_fields_not_missing(
+            website = self.website.get(),
+            login = self.login.get(),
+            password = self.password.get()
+        )
+        
+        clear_input_fields(self.website, self.login, self.password)
 
         if missing_fields:
-            messagebox.showinfo('Info', f'You forgot to add {", ".join(missing_fields)}')
-            clear_input_fields(self.website, self.login, self.password)
-
-        else:
             session = create_database()
             query = session.query(Credential).filter_by(website=website_value, login=login_value)
             user = session.query(LoginCredentials).filter_by(username=self.username).first()
