@@ -45,3 +45,11 @@ class SwitchUser:
 
         add_new_window_button = ctk.CTkButton(master=self.tab, text='Submit', command=self.new_window)
         add_new_window_button.pack(pady=20)
+
+    def get_selected_item(self):
+        selected_item = self.tree.selection()
+        if selected_item:
+            item = self.tree.item(selected_item[0])
+            selected_username = item.get('values')[0]
+            return selected_username
+        
