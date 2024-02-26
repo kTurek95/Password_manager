@@ -17,6 +17,9 @@ from database import create_database, LoginCredentials
 from send_email import Email
 from utils import clear_input_fields, check_if_fields_not_missing
 from cipher_tools import encrypt_password
+import smtplib
+import os
+from dotenv import load_dotenv
 
 # pylint: disable=too-many-statements, too-few-public-methods
 class RegisterUser:
@@ -62,25 +65,7 @@ class RegisterUser:
         register_confirm_password = ctk.CTkEntry(register_tab, width=120, show='*')
         register_confirm_password.place(x=170, y=91)
 
-        def insert_credentials_into_database():
-            """
-            Validates the registration form input, checks if the user already exists,
-            and inserts new user credentials into the database.
-
-            It performs several checks: ensuring all fields are filled,
-            validating the email format, ensuring the passwords match,
-            checking if the username or email already exists in the database,
-            and validating the password strength. If all checks pass,
-            the user's password is encrypted, and the credentials are stored in the database.
-            A confirmation email is sent to the user.
-            Error messages are displayed for any failed validations.
-            """
-            credentials_username = register_username.get()
-            credentials_password = register_password.get()
-            credentials_confirm_password = register_confirm_password.get()
-            credentials_email = register_email.get()
-
-            def is_valid_email(email):
+        def is_valid_email(email):
                 """
                 Validates the format of an email address using regular expressions.
 
@@ -94,28 +79,8 @@ class RegisterUser:
                 if re.match(regex, email):
                     return True
                 return False
-
-            missing_fields = check_if_fields_not_missing(
-                username = register_username.get(),
-                password = register_password.get(),
-                confirm_password = register_confirm_password.get(),
-                email = register_email.get())
-
-            if not missing_fields:
-
-                if credentials_password != credentials_confirm_password:
-                    messagebox.showerror('Error', 'The password do not match')
-                    clear_input_fields(register_password, register_confirm_password)
-                elif not is_valid_email(credentials_email) and not len(credentials_email) == 0:
-                    messagebox.showerror('Error', 'Email address is not valid')
-                    clear_input_fields(register_email)
-                else:
-                    if not len(credentials_password) == 0:
-                        password = api.Api(credentials_password)
-                        valid, errors = main.validate_password(password)
-                        session = create_database()
-
-                        def check_if_user_exist(username, email):
+        
+        def check_if_user_exist(username, email):
                             """
                             Checks if a user with the given username or email
                             already exists in the database.
@@ -127,64 +92,112 @@ class RegisterUser:
                             Returns:
                                 bool: True if the user exists, False otherwise.
                             """
-                            connection = sqlite3.connect('database.db')
-                            cursor = connection.cursor()
-                            cursor.execute("SELECT * FROM LoginCredentials WHERE"
-                                        " username=? or email=?", (username, email))
-                            existing_user = cursor.fetchone()
-                            connection.close()
+                            try:    
+                                connection = sqlite3.connect('database.db')
+                                cursor = connection.cursor()
+                                cursor.execute("SELECT * FROM LoginCredentials WHERE"
+                                            " username=? or email=?", (username, email))
+                                existing_user = cursor.fetchone()
+                                connection.close()
 
-                            return existing_user is not None
+                                return existing_user is not None
+                            except sqlite3.Error as error:
+                                 print('An error occurred: '.format(error))
+                            finally:
+                                 if connection:
+                                      connection.close()
 
-                        if check_if_user_exist(credentials_username, credentials_email):
-                            messagebox.showerror(
-                                'Error',
-                                '''An account with the provided details already exists,
-                                please try again.'''
+        def insert_credentials_into_database():
+            """
+            Validates the registration form input, checks if the user already exists,
+            and inserts new user credentials into the database.
+
+            It performs several checks: ensuring all fields are filled,
+            validating the email format, ensuring the passwords match,
+            checking if the username or email already exists in the database,
+            and validating the password strength. If all checks pass,
+            the user's password is encrypted, and the credentials are stored in the database.
+            A confirmation email is sent to the user.
+            Error messages are displayed for any failed validations.
+            """
+            load_dotenv()
+            key = os.environ.get('KEY')
+            credentials_username = register_username.get()
+            credentials_password = register_password.get()
+            credentials_confirm_password = register_confirm_password.get()
+            credentials_email = register_email.get()
+
+            missing_fields = check_if_fields_not_missing(
+                username = register_username.get(),
+                password = register_password.get(),
+                confirm_password = register_confirm_password.get(),
+                email = register_email.get())
+
+            if not missing_fields:
+                if credentials_password != credentials_confirm_password:
+                    messagebox.showerror('Error', 'The password do not match')
+                    clear_input_fields(register_password, register_confirm_password)
+                elif not is_valid_email(credentials_email) and not len(credentials_email) == 0:
+                    messagebox.showerror('Error', 'Email address is not valid')
+                    clear_input_fields(register_email)
+            else:
+                if  not len(credentials_password) == 0:
+                    password = api.Api(credentials_password)
+                    valid, errors = main.validate_password(password)
+                    session = create_database()
+
+                    if check_if_user_exist(credentials_username, credentials_email):
+                        messagebox.showerror(
+                            'Error',
+                            '''An account with the provided details already exists,
+                            please try again.'''
+                        )
+                        clear_input_fields(register_username,
+                                        register_password,
+                                        register_confirm_password,
+                                        register_email
+                        )
+                    else:
+                        if valid:
+                            login_credentials = LoginCredentials(
+                                username=credentials_username,
+                                password=encrypt_password(key ,credentials_password),
+                                confirm_password=credentials_confirm_password,
+                                email=credentials_email)
+                            session.add(login_credentials)
+
+                            email_object = Email(credentials_email,
+                                                credentials_username,
+                                                credentials_password
                             )
+                            try:
+                                email_object.send_mail()
+                            except smtplib.SMTPException as e:
+                                print(f"An error occurred while sending the email: {e}")
+
+                            messagebox.showinfo(
+                                'Info', 'Thank you, your account has just been registered. \n'
+                                'Check your email and restart the program.'
+                            )
+                            session.commit()
                             clear_input_fields(register_username,
                                             register_password,
                                             register_confirm_password,
                                             register_email
                             )
                         else:
-                            if valid:
-                                login_credentials = LoginCredentials(
-                                    username=credentials_username,
-                                    password=encrypt_password('kacper95' ,credentials_password),
-                                    confirm_password=credentials_confirm_password,
-                                    email=credentials_email)
-                                session.add(login_credentials)
-
-                                email_object = Email(credentials_email,
-                                                    credentials_username,
-                                                    credentials_password
-                                )
-                                email_object.send_mail()
-
-                                messagebox.showinfo(
-                                    'Info', 'Thank you, your account has just been registered. \n'
-                                    'Check your email and restart the program.'
-                                )
-                                session.commit()
-                                clear_input_fields(register_username,
-                                                register_password,
-                                                register_confirm_password,
-                                                register_email
-                                )
-                            else:
-                                error_messages = '\n'.join([f' - {error}\n' for _, error in errors])
-                                messagebox.showerror(
-                                    'Error',
-                                    f'''The provided password does not
-                                    meet the following requirements:
-                                    \n \n{error_messages}'''
-                                )
-                                clear_input_fields(register_username,
-                                                register_password,
-                                                register_confirm_password,
-                                                register_email
-                                )
+                            error_messages = '\n'.join([f' - {error}\n' for _, error in errors])
+                            messagebox.showerror(
+                                'Error',
+                                f'''The provided password does not
+                                meet the following requirements:
+                                \n \n{error_messages}'''
+                            )
+                            clear_input_fields(register_username,
+                                            register_password,
+                                            register_confirm_password,
+                                            register_email
+                            )
 
         register_button = ctk.CTkButton(register_tab,
                                         command=insert_credentials_into_database,
