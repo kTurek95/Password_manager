@@ -1,6 +1,5 @@
-SQLAlchemy~=2.0.21
-greenlet~=2.0.2
-cryptography~=41.0.4
-python-dotenv~=1.0.0
-setuptools~=65.5.1
+cryptography==41.0.7
+customtkinter==5.2.1
+python-dotenv==1.0.0
+SQLAlchemy==2.0.25
 ./password-0.1.tar.gz
