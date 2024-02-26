@@ -25,6 +25,8 @@ from password_package import api, main
 from cipher_tools import encrypt_password
 from database import create_database, Credential, Password, LoginCredentials
 from utils import clear_input_fields, check_if_fields_not_missing
+import os
+from dotenv import load_dotenv
 
 
 class AddPassword:
@@ -132,6 +134,8 @@ class AddPassword:
             event: The event that triggered the function (not used here).
         """
 
+        load_dotenv()
+        key = os.environ.get('KEY')
         website_value = self.website.get()
         login_value = self.login.get()
         password_value = self.password.get()
@@ -161,7 +165,7 @@ class AddPassword:
                                             login=login_value,
                                             username_id=user.id)
                     password_data = (
-                        Password(password=encrypt_password('kacper95', password_value),
+                        Password(password=encrypt_password(key, password_value),
                                 credential=credential)
                                 )
 

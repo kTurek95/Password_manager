@@ -10,6 +10,8 @@ from cipher_tools import encrypt_password
 from database import create_database, Credential
 from center_window import center_window
 from update_treeview import UpdateTreeview
+import os
+from dotenv import load_dotenv
 
 
 # pylint: disable=too-many-instance-attributes
@@ -122,6 +124,8 @@ class UpdatePassword(UpdateTreeview):
             - An error message if the provided password does not meet the requirements.
             - A warning if the login does not match the selected website credential.
         """
+        load_dotenv()
+        key = os.environ.get('KEY')
         login_from_user = self.user_login.get()
         user_password = self.new_password.get()
         data_item = self.tree.selection()[0]
@@ -136,7 +140,7 @@ class UpdatePassword(UpdateTreeview):
                 password_obj = credential.passwords
                 if valid:
                     if password_obj:
-                        password_obj.password = encrypt_password('kacper95', user_password)
+                        password_obj.password = encrypt_password(key, user_password)
                         session.commit()
                         messagebox.showinfo('Info', 'Password were updated')
                 else:

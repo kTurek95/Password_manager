@@ -4,6 +4,8 @@ import customtkinter as ctk
 from cipher_tools import decrypt_password
 from database import create_database, Credential
 from update_treeview import UpdateTreeview
+import os
+from dotenv import load_dotenv
 
 
 class Credentials(UpdateTreeview):
@@ -80,6 +82,8 @@ class Credentials(UpdateTreeview):
        Parameters:
            event (Event): The event that triggers this function, containing information about the selected item.
        """
+        load_dotenv()
+        key = os.environ.get('KEY')
         [item] = self.tree.selection()
         if item:
             values = self.tree.item(item, 'values')
@@ -93,5 +97,5 @@ class Credentials(UpdateTreeview):
             related_password = credential.passwords
             if related_password:
                 self.root.clipboard_clear()
-                self.root.clipboard_append(decrypt_password('kacper95', related_password.password))
+                self.root.clipboard_append(decrypt_password(key, related_password.password))
         self.tree.selection_remove(item)
