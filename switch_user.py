@@ -6,6 +6,9 @@ from tkinter import messagebox
 from utils import get_users_from_database
 from center_window import center_window
 from utils import clear_input_fields
+from cipher_tools import decrypt_password
+import os
+from dotenv import load_dotenv
 
 
 class SwitchUser:
@@ -17,10 +20,6 @@ class SwitchUser:
         self.user_password = user_password
         self.main_window = main_window
         self.checkboxes = []
-        self.tree = ttk.Treeview(tab,
-                            columns=('Users',),
-                            show='headings',
-                            height=4, )
 
     def open_new_window(self):
         new_window = ctk.CTkToplevel(self.root)
@@ -46,10 +45,13 @@ class SwitchUser:
             open_main_window(self.main_window, username, self.user_login, self.user_password)
 
         def check_password():
+            load_dotenv()
+            key = os.environ.get('KEY')
             correct_password = password.get()
             user = get_users_from_database(username=username)
+            user_password = decrypt_password(key, user[0])
         
-            if user[0] == correct_password:
+            if user_password == correct_password:
                 close()
                 open_window()
             else:
@@ -60,6 +62,19 @@ class SwitchUser:
         submit_button.pack(pady=10)
 
     def display_users(self):
+        style = ttk.Style()
+        style.configure("mystyle.Treeview", font=('Times New Roman', 20), rowheight=50)
+        style.configure("mystyle.Treeview.Heading", font=('Times New Roman', 15))
+        style.map("mystyle.Treeview", background=[('selected', 'gray')])
+        style.configure("mystyle.Treeview")
+
+        self.tree = ttk.Treeview(
+            self.tab,
+            columns=('1',),
+            show='headings',
+            height=4,
+            style="mystyle.Treeview"
+        )
         self.tree["columns"] = ("1",)
         self.tree.column("1", stretch=tk.YES)
 
