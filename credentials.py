@@ -44,6 +44,7 @@ class Credentials(UpdateTreeview):
             columns=('Website', 'Login'),
             show='headings',
             height=4,
+            style="mystyle.Treeview"
             )
 
         my_color = '#292929'
@@ -58,6 +59,10 @@ class Credentials(UpdateTreeview):
         Configures the 'tree' treeview by setting up columns, headings, and a scrollbar.
         Also adds a 'Submit' button and assigns it a corresponding function.
         """
+
+        style = ttk.Style()
+        style.configure("mystyle.Treeview", font=('Times New Roman', 25))
+        style.configure("mystyle.Treeview.Heading", font=('Times New Roman', 15))
         self.tree['columns'] = ('first', 'second')
         self.tree.column('#0', width=120, stretch=tk.NO)
         self.tree.column('first', stretch=tk.YES, width=120)
@@ -89,13 +94,13 @@ class Credentials(UpdateTreeview):
             values = self.tree.item(item, 'values')
             selected_website = values[0]
             messagebox.showinfo(
-                'Info', f'Wybrałeś {selected_website}, Twoje hasło zostało skopiowane do schowka')
+                'Info', f'You chose {selected_website}, Your password has been copied to the clipboard')
 
             session = create_database()
             credential = session.query(Credential).filter_by(website=selected_website).first()
 
-            related_password = credential.passwords
+            related_password = credential.passwords.password
             if related_password:
                 self.root.clipboard_clear()
-                self.root.clipboard_append(decrypt_password(key, related_password.password))
+                self.root.clipboard_append(decrypt_password(key, related_password))
         self.tree.selection_remove(item)

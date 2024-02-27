@@ -51,11 +51,16 @@ class DeletePassword(UpdateTreeview):
             yscrollcommand=self.scrollbar.set,
             columns=('Choose credential',),
             show='headings',
-            height=4, )
+            height=4,
+            style="mystyle.Treeview"
+            )
 
         self.configure_tree()
 
     def configure_tree(self):
+        style = ttk.Style()
+        style.configure("mystyle.Treeview", font=('Times New Roman', 25))
+        style.configure("mystyle.Treeview.Heading", font=('Times New Roman', 15))
         self.tree['columns'] = ('first',)
         self.tree.column('first', stretch=tk.YES)
         self.tree.heading('first', text='Choose website credential to delete')
