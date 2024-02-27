@@ -150,46 +150,50 @@ class AddPassword:
 
         if missing_fields:
             session = create_database()
-            query = session.query(Credential).filter_by(website=website_value, login=login_value)
             user = session.query(LoginCredentials).filter_by(username=self.username).first()
-            result = query.first()
-
-            if result and result.website == website_value and result.login == login_value:
-                messagebox.showinfo('Info', 'The data is already in the database')
-                clear_input_fields(self.website, self.login, self.password)
-
-            else:
-                valid, errors = main.validate_password(api.Api(password_value))
-                if valid:
-                    credential = Credential(website=website_value,
-                                            login=login_value,
-                                            username_id=user.id)
-                    password_data = (
-                        Password(password=encrypt_password(key, password_value),
-                                credential=credential)
-                                )
-
-                    session.add(credential)
-                    session.add(password_data)
-                    session.commit()
-
-                    self.update_credentials_treeview(tree_name=self.credentials.tree,
-                                                     table_name=Credential,
-                                                     username=self.username)
-                    self.update_credentials_treeview(tree_name=self.update_password.tree,
-                                                     table_name=Credential,
-                                                     username=self.username)
-                    self.update_credentials_treeview(tree_name=self.delete_password.tree,
-                                                     table_name=Credential,
-                                                     username=self.username)
-
+            if user:
+                query = session.query(Credential).filter_by(
+                    website=website_value,
+                    login=login_value,
+                    username_id=user.id
+                    ).first()
+                if query:
+                    messagebox.showinfo('Info', 'The data is already in the database')
                     clear_input_fields(self.website, self.login, self.password)
-                    messagebox.showinfo('Info', 'Credentials were added')
 
                 else:
-                    error_messages = '\n'.join([f' - {error}\n' for _, error in errors])
-                    messagebox.showerror(
-                        'Error',
-                        f'The provided password does not meet the following requirements:\n \n{error_messages}'
-                    )
-                    clear_input_fields(self.website, self.login, self.password)
+                    valid, errors = main.validate_password(api.Api(password_value))
+                    if valid:
+                        credential = Credential(website=website_value,
+                                                login=login_value,
+                                                username_id=user.id)
+                        password_data = (
+                            Password(password=encrypt_password(key, password_value),
+                                    credential=credential)
+                                    )
+
+                        session.add(credential)
+                        session.add(password_data)
+                        session.commit()
+
+                        self.update_credentials_treeview(tree_name=self.credentials.tree,
+                                                        table_name=Credential,
+                                                        username=self.username)
+                        self.update_credentials_treeview(tree_name=self.update_password.tree,
+                                                        table_name=Credential,
+                                                        username=self.username)
+                        self.update_credentials_treeview(tree_name=self.delete_password.tree,
+                                                        table_name=Credential,
+                                                        username=self.username)
+
+                        clear_input_fields(self.website, self.login, self.password)
+                        messagebox.showinfo('Info', 'Credentials were added')
+
+                    else:
+                        error_messages = '\n'.join([f' - {error}\n' for _, error in errors])
+                        messagebox.showerror(
+                            'Error',
+                            f'The provided password does not meet the following requirements:\n \n{error_messages}'
+                        )
+                        clear_input_fields(self.website, self.login, self.password)
+                        
