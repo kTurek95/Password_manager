@@ -56,6 +56,7 @@ def open_main_window(root, username, user_login, user_password):
     update_password_instance = UpdatePassword(
         update_password,
         main_window,
+        username,
         table_name=Credential
     )
     update_password_instance.update_credentials_treeview(update_password_instance.tree, username)

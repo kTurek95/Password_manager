@@ -7,7 +7,7 @@ from tkinter import ttk, messagebox
 import customtkinter as ctk
 from password_package import api, main
 from cipher_tools import encrypt_password
-from database import create_database, Credential
+from database import create_database, Credential, LoginCredentials
 from center_window import center_window
 from update_treeview import UpdateTreeview
 import os
@@ -31,8 +31,9 @@ class UpdatePassword(UpdateTreeview):
         toplevel: None (Optional): The top-level window for updating the password.
         user_login: None (Optional): The login of the user whose password is being updated.
         new_password: None (Optional): The new password to set for the selected user.
+        username: The username from currently logged user
     """
-    def __init__(self, tab, root, table_name):
+    def __init__(self, tab, root, username, table_name):
         """
        Initialize the UpdatePassword class.
 
@@ -44,6 +45,7 @@ class UpdatePassword(UpdateTreeview):
         super().__init__(table_name)
         self.root = root
         self.tab = tab
+        self.username = username
         self.scrollbar = tk.Scrollbar(tab, orient='vertical')
 
         self.tree = ttk.Treeview(
@@ -140,7 +142,8 @@ class UpdatePassword(UpdateTreeview):
             selected_website = values[0]
 
             session = create_database()
-            credential = session.query(Credential).filter_by(website=selected_website).first()
+            user = session.query(LoginCredentials).filter_by(username=self.username).first()
+            credential = session.query(Credential).filter_by(website=selected_website, username_id=user.id).first()
             if credential and login_from_user == credential.login:
                 password_obj = credential.passwords
                 if valid:
