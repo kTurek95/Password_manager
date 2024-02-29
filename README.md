@@ -1,42 +1,9 @@
 # Password Manager
 
-![Animacja działania](Password_manager.gif)
+![Animacja działania](Password_manager(shorts).gif)
 
 Password Manager is an advanced application designed to securely store and manage passwords.
-Our password manager offers a simple and secure way to keep all your logins and passwords in one place.
-
-## Features
-
-### Registration and Login
-
-- #### Registration: Users can easily create an account, after which they will receive an email with login details.
-
-- #### Login: Access to accounts is protected with individual login credentials.
-
-### User Account Management
-
-- #### Users: Displays a list of registered users.
-
-- #### Register: Allows for the registration of a new user.
-
-- #### Delete User: Enables the deletion of a selected user.
-
-### Password Management
-
-- #### Credentials: Displays the login and password for a selected site.
-
-- #### Add Password: Allows you to add new login details, including the option to generate a secure 
-
-- #### Update Password: Enables changing the password for a selected site.
-
-- #### Delete Password: Allows for the deletion of login details for a selected site.
-
-### Additional Features
-
-- #### Switch User: Enables changing users after entering correct login details.
-
-- #### Logout: Allows for secure logging out of the application.
-
+My password manager offers a simple and secure way to keep all your logins and passwords in one place.
 
 ## Installation
 1. Make sure you have Python 3.x installed on your system.
@@ -48,6 +15,37 @@ Our password manager offers a simple and secure way to keep all your logins and 
 5. Install the required dependencies by running:
     - pip install -r requirements.txt
 
+## Features
+
+### Registration and Login
+
+- **Registration**: Users can easily create an account, after which they will receive an email with login details.
+
+- **Login**: Access to accounts is protected with individual login credentials.
+
+### User Account Management
+
+- **Users**: Displays a list of registered users.
+
+- **Register**: Allows for the registration of a new user.
+
+- **Delete User**: Enables the deletion of a selected user.
+
+### Password Management
+
+- **Credentials**: Displays the login and password for a selected site.
+
+- **Add Password**: Allows you to add new login details, including the option to generate a secure 
+
+- **Update Password**: Enables changing the password for a selected site.
+
+- **Delete Password**: Allows for the deletion of login details for a selected site.
+
+### Additional Features
+
+- **Switch User**: Enables changing users after entering correct login details.
+
+- **Logout**: Allows for secure logging out of the application.
 
 ## Support
 
