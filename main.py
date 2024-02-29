@@ -20,10 +20,9 @@ def open_login_window():
     allowing users to log in, register, and delete their accounts.
     """
     root = ctk.CTk()
-    center_window(root)
     root.title('Password Manager')
     ctk.set_appearance_mode('Dark')
-    root.geometry('350x250')
+    root.geometry('220x130')
     root.resizable(False, False)
 
     def on_closing():
@@ -49,6 +48,7 @@ def open_login_window():
     deleteuser_instance.display_users()
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
+    center_window(root)
     root.mainloop()
 
 

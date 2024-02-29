@@ -80,7 +80,7 @@ class Users(LoginToApp):
                              text='Available users: ',
                              corner_radius=10,
                              fg_color=("white", "gray"))
-        label.pack(pady=5)
+        label.pack(pady=15)
 
         users = self.logins_list()
         self.users_box = ctk.CTkComboBox(self.user_tab, values=users, state='readonly')
@@ -91,4 +91,4 @@ class Users(LoginToApp):
                                command= lambda: (self.user_picker() and
                                                  move_user(self.tabview,
                                                                 'Login')))
-        button.pack(pady=5)
+        button.pack(pady=15)

@@ -59,10 +59,7 @@ class Credentials(UpdateTreeview):
         Configures the 'tree' treeview by setting up columns, headings, and a scrollbar.
         Also adds a 'Submit' button and assigns it a corresponding function.
         """
-
-        style = ttk.Style()
-        style.configure("mystyle.Treeview", font=('Times New Roman', 25))
-        style.configure("mystyle.Treeview.Heading", font=('Times New Roman', 15))
+        
         self.tree['columns'] = ('first', 'second')
         self.tree.column('#0', width=120, stretch=tk.NO)
         self.tree.column('first', stretch=tk.YES, width=120)

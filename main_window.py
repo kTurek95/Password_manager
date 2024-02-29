@@ -82,12 +82,24 @@ def open_main_window(root, username, user_login, user_password):
     logout_instance = Logout(logout, username, main_window, root, user_login, user_password)
     logout_instance.logout_user()
 
-    tabsystem.add(credentials, text=' Credentials ')
-    tabsystem.add(add_password, text=' Add Password ')
-    tabsystem.add(update_password, text='Update Password')
-    tabsystem.add(delete_password, text='Delete Password')
-    tabsystem.add(switch_user, text=' Switch User ')
-    tabsystem.add(logout, text='  Logout  ')
+    tabsystem.add(credentials, text='''  
+            CREDENTIALS            
+                ''')
+    tabsystem.add(add_password, text='''
+            ADD PASSWORD          
+                ''')
+    tabsystem.add(update_password, text='''
+            UPDATE PASSWORD          
+                ''')
+    tabsystem.add(delete_password, text='''
+            DELETE PASSWORD          
+                ''')
+    tabsystem.add(switch_user, text='''
+            SWITCH USER          
+                ''')
+    tabsystem.add(logout, text='''
+            LOGOUT          
+                ''')
 
     tabsystem.pack(expand='True', fill='both')
 

@@ -47,23 +47,23 @@ class RegisterUser:
 
         register_username_label = ctk.CTkLabel(register_tab, text='Username')
         register_username_label.place(x=15, y=1)
-        register_username = ctk.CTkEntry(register_tab, width=120)
+        register_username = ctk.CTkEntry(register_tab, width=160)
         register_username.place(x=15, y=31)
 
         register_email_label = ctk.CTkLabel(register_tab, text='Email')
-        register_email_label.place(x=170, y=1)
-        register_email = ctk.CTkEntry(register_tab, width=120)
-        register_email.place(x=170, y=31)
+        register_email_label.place(x=210, y=1)
+        register_email = ctk.CTkEntry(register_tab, width=160)
+        register_email.place(x=210, y=31)
 
         register_password_label = ctk.CTkLabel(register_tab, text='Password')
         register_password_label.place(x=15, y=61)
-        register_password = ctk.CTkEntry(register_tab, width=120, show='*')
+        register_password = ctk.CTkEntry(register_tab, width=160, show='*')
         register_password.place(x=15, y=91)
 
         register_confirm_password_label = ctk.CTkLabel(register_tab, text='Confirm Password')
-        register_confirm_password_label.place(x=170, y=61)
-        register_confirm_password = ctk.CTkEntry(register_tab, width=120, show='*')
-        register_confirm_password.place(x=170, y=91)
+        register_confirm_password_label.place(x=210, y=61)
+        register_confirm_password = ctk.CTkEntry(register_tab, width=160, show='*')
+        register_confirm_password.place(x=210, y=91)
 
         def is_valid_email(email):
                 """
@@ -202,4 +202,4 @@ class RegisterUser:
         register_button = ctk.CTkButton(register_tab,
                                         command=insert_credentials_into_database,
                                         text='Register')
-        register_button.place(x=82, y=125)
+        register_button.place(x=120, y=125)

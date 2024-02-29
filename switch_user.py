@@ -64,7 +64,7 @@ class SwitchUser:
     def display_users(self):
         style = ttk.Style()
         style.configure("mystyle.Treeview", font=('Times New Roman', 20), rowheight=50)
-        style.configure("mystyle.Treeview.Heading", font=('Times New Roman', 15))
+        style.configure("mystyle.Treeview.Heading", font=('Times New Roman', 20))
         style.map("mystyle.Treeview", background=[('selected', 'gray')])
         style.configure("mystyle.Treeview")
 
