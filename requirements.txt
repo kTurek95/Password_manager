@@ -3,4 +3,5 @@ customtkinter==5.2.1
 python-dotenv==1.0.0
 SQLAlchemy==2.0.25
 packaging==23.2
+screeninfo==0.8.1
 ./password-0.1.tar.gz
